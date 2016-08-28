@@ -1,15 +1,29 @@
 package com.cassioik.lembretes;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import com.cassioik.lembretes.DAO.LembreteDAO;
+
+import java.util.ArrayList;
 
 public class LembretesActivity extends AppCompatActivity {
+    //Componenter
+    ListView listView;
+
+    //Adaptadores
+    ArrayAdapter<String> adaptador;
+
+    //Conteudo
+    ArrayList<String> conteudo = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,14 +32,34 @@ public class LembretesActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        /**
+         *  Botao Flutuante
+         */
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent irParaTelaDeAdicionarLembrete = new Intent(LembretesActivity.this, AdicionarLembreteActivity.class);
+                LembretesActivity.this.startActivity(irParaTelaDeAdicionarLembrete);
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        /**
+         * Populando ListView
+         */
+        listView = (ListView)findViewById(R.id.listView);
+
+        LembreteDAO lembreteDAO = new LembreteDAO(getBaseContext());
+        conteudo = lembreteDAO.listarLembretes();
+
+        adaptador = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, conteudo);
+
+        listView.setAdapter(adaptador);
     }
 
     @Override
