@@ -8,22 +8,26 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.cassioik.lembretes.DAO.LembreteDAO;
+import com.cassioik.lembretes.model.Lembrete;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class LembretesActivity extends AppCompatActivity {
     //Componenter
-    ListView listView;
+    //ListView listView;
 
     //Adaptadores
-    ArrayAdapter<String> adaptador;
+    ArrayAdapter<Lembrete> adaptador;
 
     //Conteudo
-    ArrayList<String> conteudo = new ArrayList<String>();
+    ArrayList<Lembrete> conteudo = new ArrayList<Lembrete>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,11 +47,14 @@ public class LembretesActivity extends AppCompatActivity {
                 LembretesActivity.this.startActivity(irParaTelaDeAdicionarLembrete);
             }
         });
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        final ListView listView;
 
         /**
          * Populando ListView
@@ -57,9 +64,23 @@ public class LembretesActivity extends AppCompatActivity {
         LembreteDAO lembreteDAO = new LembreteDAO(getBaseContext());
         conteudo = lembreteDAO.listarLembretes();
 
-        adaptador = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, conteudo);
+        adaptador = new ArrayAdapter<Lembrete>(this, android.R.layout.simple_list_item_1, conteudo);
 
         listView.setAdapter(adaptador);
+
+        /**
+         *  ListView Listener
+         */
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Lembrete lembrete = (Lembrete)listView.getItemAtPosition(i);
+                //Toast.makeText(getApplicationContext(), lembrete.toString(), Toast.LENGTH_LONG).show();
+                Intent irParaVisualizador = new Intent(LembretesActivity.this, VisualizarLembreteActivity.class);
+                irParaVisualizador.putExtra("id", lembrete.getId());
+                LembretesActivity.this.startActivity(irParaVisualizador);
+            }
+        });
     }
 
     @Override
