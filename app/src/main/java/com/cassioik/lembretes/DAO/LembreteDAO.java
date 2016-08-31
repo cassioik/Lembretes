@@ -81,4 +81,36 @@ public class LembreteDAO {
         return lembrete;
     }
 
+    public String editarLembrete(Lembrete lembrete){
+        ContentValues valores;
+        long resultado;
+
+        db = banco.getWritableDatabase();
+        valores = new ContentValues();
+        valores.put(CriaBanco.TITULO, lembrete.getTitulo());
+        valores.put(CriaBanco.DESCRICAO, lembrete.getDescricao());
+
+        resultado = db.update(CriaBanco.TABELA, valores, CriaBanco.ID+"="+lembrete.getId(), null);
+        db.close();
+
+        if (resultado ==-1)
+            return "Erro ao editar registro";
+        else
+            return "Registro editado com sucesso";
+    }
+
+    public String excluirLembrete(int id){
+        long resultado;
+
+        db = banco.getWritableDatabase();
+
+        resultado = db.delete(CriaBanco.TABELA, CriaBanco.ID+"="+id, null);
+        db.close();
+
+        if (resultado ==-1)
+            return "Erro ao excluir registro";
+        else
+            return "Registro excluido com sucesso";
+    }
+
 }
